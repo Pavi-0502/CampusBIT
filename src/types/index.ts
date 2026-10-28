@@ -1,4 +1,12 @@
 export type ItemCategory =
+  | 'Textbooks & Books'
+  | 'Electronics & Accessories'
+  | 'Scientific Calculators'
+  | 'Bicycles & Transportation'
+  | 'Hostel & Room Essentials'
+  | 'Lab Equipment & Supplies'
+  | 'Drawing Tools & Stationery'
+  | 'Sports & Miscellaneous'
   | 'Cycles'
   | 'Calculators'
   | 'Books'
@@ -53,6 +61,7 @@ export interface Profile {
   pseudonym: string;
   avatar_url?: string;
   campus_domain: string;
+  department?: string;
   hostel_block?: string;
   room_number?: string;
   phone_number?: string;
@@ -67,9 +76,11 @@ export interface Auction {
   id: string;
   seller_id: string;
   title: string;
+  short_description?: string;
   description: string;
   category: ItemCategory;
   condition: ItemCondition;
+  original_price_paise?: number;
   starting_price_paise: number;
   minimum_increment_paise: number;
   current_price_paise: number;
@@ -86,6 +97,7 @@ export interface Auction {
   sniper_extended_count: number;
   view_count: number;
   images: string[];
+  is_demo?: boolean;
   created_at: string;
   updated_at: string;
   // Hydrated helper fields
