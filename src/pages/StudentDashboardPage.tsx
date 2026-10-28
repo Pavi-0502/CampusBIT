@@ -27,6 +27,7 @@ export const StudentDashboardPage: React.FC = () => {
   const [activeTab, setActiveTab] = useState<
     'bids' | 'leading' | 'outbid' | 'won' | 'watchlist' | 'settings'
   >('bids');
+  const [profileMessage, setProfileMessage] = useState<string | null>(null);
 
   if (!currentUser) {
     return (
@@ -68,6 +69,21 @@ export const StudentDashboardPage: React.FC = () => {
     watchlist.some((w) => w.auction_id === a.id && w.user_id === currentUser.id)
   );
 
+  const handleProfileUpdate = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    const form = new FormData(event.currentTarget);
+    try {
+      await updateProfile({
+        display_name: String(form.get('display_name') || '').trim(),
+        department: String(form.get('department') || '').trim(),
+        academic_year: String(form.get('academic_year') || ''),
+      });
+      setProfileMessage('Profile updated.');
+    } catch (error) {
+      setProfileMessage(error instanceof Error ? error.message : 'Unable to update profile.');
+    }
+  };
+
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
       {/* Student Profile Header */}
@@ -95,7 +111,13 @@ export const StudentDashboardPage: React.FC = () => {
               </span>
             </div>
             <p className="text-xs text-slate-500 mt-0.5">
-              {currentUser.hostel_block || 'Campus Resident'} • {currentUser.campus_domain}
+              {currentUser.college_email || `@${currentUser.campus_domain}`} • {currentUser.department || 'Department pending'}
+            </p>
+            <p className="text-[11px] text-slate-500 mt-1">
+              Student ID: {currentUser.student_id || 'Not provided'} · {currentUser.academic_year || 'Academic year pending'}
+            </p>
+            <p className={`text-[11px] font-semibold mt-1 ${currentUser.email_verified && currentUser.approval_status === 'approved' ? 'text-emerald-700' : 'text-amber-700'}`}>
+              Email verification: {currentUser.email_verified ? 'Verified' : 'Pending'} · Administrator approval: {currentUser.approval_status === 'approved' ? 'Approved' : 'Pending'}
             </p>
           </div>
         </div>
@@ -122,6 +144,16 @@ export const StudentDashboardPage: React.FC = () => {
           </div>
         </div>
       </div>
+
+      <details className="bg-white rounded-3xl border border-slate-200 shadow-2xs">
+        <summary className="cursor-pointer px-6 py-4 text-sm font-bold text-slate-800">Update permitted profile details</summary>
+        <form onSubmit={handleProfileUpdate} className="px-6 pb-6 grid sm:grid-cols-3 gap-4">
+          <label className="text-xs font-bold text-slate-700">Name<input name="display_name" defaultValue={currentUser.display_name} required className="mt-1 w-full px-3 py-2 rounded-xl border border-slate-200 text-sm font-normal" /></label>
+          <label className="text-xs font-bold text-slate-700">Department<input name="department" defaultValue={currentUser.department || ''} className="mt-1 w-full px-3 py-2 rounded-xl border border-slate-200 text-sm font-normal" /></label>
+          <label className="text-xs font-bold text-slate-700">Academic year<select name="academic_year" defaultValue={currentUser.academic_year || ''} className="mt-1 w-full px-3 py-2 rounded-xl border border-slate-200 bg-white text-sm font-normal"><option value="">Select year</option>{['1st Year', '2nd Year', '3rd Year', '4th Year', 'Postgraduate'].map((year) => <option key={year}>{year}</option>)}</select></label>
+          <div className="sm:col-span-3 flex items-center gap-3"><button type="submit" className="px-4 py-2 rounded-xl bg-brand-900 text-white text-xs font-bold">Save profile</button>{profileMessage && <span className="text-xs text-slate-600">{profileMessage}</span>}</div>
+        </form>
+      </details>
 
       {/* Tabs navigation */}
       <div className="flex items-center gap-2 overflow-x-auto pb-1 border-b border-slate-200">

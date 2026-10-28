@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
 import { useAuth } from '../../context/AuthContext';
-import { Sparkles, Users, Database, ShieldCheck, ChevronRight, HelpCircle } from 'lucide-react';
+import { Database, ShieldCheck, HelpCircle } from 'lucide-react';
 import { Modal } from '../common/Modal';
 
 export const DemoBanner: React.FC = () => {
-  const { isDemoMode, currentUser, allDemoProfiles, switchDemoUser, campusDomain } = useAuth();
+  const { isDemoMode, campusDomain } = useAuth();
   const [showSetupModal, setShowSetupModal] = useState(false);
 
   return (
@@ -25,27 +25,11 @@ export const DemoBanner: React.FC = () => {
             </span>
             <span className="hidden sm:inline text-brand-400">|</span>
             <span className="hidden sm:inline text-brand-300">
-              {isDemoMode ? 'Interactive Demo Mode' : 'Connected to Supabase DB'}
+              {isDemoMode ? 'Supabase setup required for student access' : 'Connected to Supabase Auth & DB'}
             </span>
           </div>
 
           <div className="flex items-center gap-2">
-            <div className="flex items-center gap-1 bg-brand-900/80 px-2 py-1 rounded-lg border border-brand-800">
-              <Users className="w-3.5 h-3.5 text-brand-300" />
-              <span className="text-[11px] text-brand-200 hidden md:inline">Switch Role:</span>
-              <select
-                value={currentUser?.id || ''}
-                onChange={(e) => switchDemoUser(e.target.value)}
-                className="bg-transparent text-white text-[11px] font-medium focus:outline-none cursor-pointer"
-              >
-                {allDemoProfiles.map((p) => (
-                  <option key={p.id} value={p.id} className="bg-slate-900 text-white">
-                    {p.display_name} ({p.id === 'user-aarav' ? 'Seller - Cycle/Laptop' : p.id === 'user-priya' ? 'Buyer - 1st Year' : 'Senior Student'})
-                  </option>
-                ))}
-              </select>
-            </div>
-
             <button
               onClick={() => setShowSetupModal(true)}
               className="text-[11px] text-brand-300 hover:text-white flex items-center gap-1 underline underline-offset-2 ml-1"

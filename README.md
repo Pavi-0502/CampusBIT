@@ -100,6 +100,21 @@ npm test
 
 ## 🚀 Getting Started Locally
 
+### Student authentication and approval
+
+CampusBIT uses the existing Supabase Auth integration. Registration accepts the configured
+college domain as a first filter, but a student cannot bid, create listings, save searches,
+or use other student-only actions until:
+
+1. Supabase confirms the email address.
+2. An administrator changes that student's `profiles.approval_status` to `approved`.
+
+The migration `20261028000003_student_auth_and_approval.sql` creates the profile fields,
+email-domain configuration (`student_auth_config`), profile trigger, ownership protections,
+and database-side eligibility checks. Update the `approved_email_domain` row if the
+institution changes; do not rely on the frontend environment variable as a security boundary.
+Students cannot update approval fields or grant themselves privileges.
+
 ### 1. Prerequisites
 - Node.js $\ge 18$ (Node 24 recommended)
 - npm or pnpm

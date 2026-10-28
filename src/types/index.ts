@@ -60,8 +60,14 @@ export interface Profile {
   display_name: string;
   pseudonym: string;
   avatar_url?: string;
+  college_email?: string;
+  student_id?: string;
   campus_domain: string;
   department?: string;
+  academic_year?: string;
+  email_verified?: boolean;
+  approval_status?: 'pending' | 'approved' | 'rejected';
+  approved_at?: string | null;
   hostel_block?: string;
   room_number?: string;
   phone_number?: string;

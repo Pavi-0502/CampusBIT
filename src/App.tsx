@@ -17,6 +17,7 @@ import { StudentDashboardPage } from './pages/StudentDashboardPage';
 import { SellerDashboardPage } from './pages/SellerDashboardPage';
 import { SavedSearchesPage } from './pages/SavedSearchesPage';
 import { AuthPage } from './pages/AuthPage';
+import { ProtectedRoute } from './components/auth/ProtectedRoute';
 
 export function App() {
   const [aiAssistantOpen, setAiAssistantOpen] = useState(false);
@@ -35,10 +36,10 @@ export function App() {
                   <Route path="/" element={<LandingPage onOpenAI={() => setAiAssistantOpen(true)} />} />
                   <Route path="/marketplace" element={<MarketplacePage />} />
                   <Route path="/auctions/:id" element={<AuctionDetailPage />} />
-                  <Route path="/create" element={<CreateListingPage />} />
-                  <Route path="/dashboard" element={<StudentDashboardPage />} />
-                  <Route path="/seller" element={<SellerDashboardPage />} />
-                  <Route path="/saved-searches" element={<SavedSearchesPage />} />
+                  <Route path="/create" element={<ProtectedRoute><CreateListingPage /></ProtectedRoute>} />
+                  <Route path="/dashboard" element={<ProtectedRoute><StudentDashboardPage /></ProtectedRoute>} />
+                  <Route path="/seller" element={<ProtectedRoute><SellerDashboardPage /></ProtectedRoute>} />
+                  <Route path="/saved-searches" element={<ProtectedRoute><SavedSearchesPage /></ProtectedRoute>} />
                   <Route path="/auth" element={<AuthPage />} />
                 </Routes>
               </main>

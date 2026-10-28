@@ -68,7 +68,7 @@ interface AuctionContextType {
 const AuctionContext = createContext<AuctionContextType | undefined>(undefined);
 
 export const AuctionProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const { currentUser, allDemoProfiles } = useAuth();
+  const { currentUser, allDemoProfiles, hasStudentAccess } = useAuth();
   const { addNotification } = useNotifications();
 
   const [auctions, setAuctions] = useState<Auction[]>(() => {
@@ -253,8 +253,8 @@ export const AuctionProvider: React.FC<{ children: React.ReactNode }> = ({ child
     auctionId: string,
     amountPaise: number
   ): Promise<{ success: boolean; error?: string; sniperExtended?: boolean }> => {
-    if (!currentUser) {
-      return { success: false, error: 'Please sign in with campus email to place bids.' };
+    if (!currentUser || !hasStudentAccess) {
+      return { success: false, error: 'A verified and administrator-approved student account is required to place bids.' };
     }
 
     const auction = auctions.find((a) => a.id === auctionId);
@@ -328,8 +328,8 @@ export const AuctionProvider: React.FC<{ children: React.ReactNode }> = ({ child
     auctionId: string,
     maxAmountPaise: number
   ): Promise<{ success: boolean; error?: string }> => {
-    if (!currentUser) {
-      return { success: false, error: 'Please sign in to set auto-bids.' };
+    if (!currentUser || !hasStudentAccess) {
+      return { success: false, error: 'A verified and administrator-approved student account is required to set auto-bids.' };
     }
 
     const auction = auctions.find((a) => a.id === auctionId);
@@ -482,7 +482,7 @@ export const AuctionProvider: React.FC<{ children: React.ReactNode }> = ({ child
   const createAuction = async (
     input: CreateAuctionInput
   ): Promise<{ success: boolean; auctionId?: string; error?: string }> => {
-    if (!currentUser) return { success: false, error: 'Sign in to list items' };
+    if (!currentUser || !hasStudentAccess) return { success: false, error: 'A verified and administrator-approved student account is required to list items' };
 
     const newAuctionId = `auc-${Date.now()}`;
     const newAuction: Auction = {
@@ -537,7 +537,7 @@ export const AuctionProvider: React.FC<{ children: React.ReactNode }> = ({ child
 
   // 6. CANCEL AUCTION (Rule 12)
   const cancelAuction = async (auctionId: string, reason: string): Promise<{ success: boolean; error?: string }> => {
-    if (!currentUser) return { success: false, error: 'Sign in required' };
+    if (!currentUser || !hasStudentAccess) return { success: false, error: 'A verified and administrator-approved student account is required.' };
     const auc = auctions.find((a) => a.id === auctionId);
     if (!auc) return { success: false, error: 'Auction not found' };
     if (auc.seller_id !== currentUser.id) return { success: false, error: 'Only seller can cancel' };
